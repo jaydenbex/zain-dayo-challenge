@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zain Dayo Best-Friend Quiz 🌸</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+  background: radial-gradient(ellipse at bottom, #19234b 0%, #080817 65%, #020208 100%);
+  overflow-x: hidden;
+}
+
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(white 1px, transparent 1px),
+    radial-gradient(#a6c8ff 1px, transparent 1px);
+  background-size: 70px 70px, 110px 110px;
+  background-position: 0 0, 30px 40px;
+  opacity: 0.5;
+  animation: twinkle 3s infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.25; }
+  to { opacity: 0.65; }
+}
+
+main {
+  position: relative;
+  z-index: 2;
+  width: min(92%, 550px);
+  margin: 0 auto;
+  padding: 35px 0 55px;
+}
+
+h1 {
+  color: #ffb6df;
+  text-shadow: 0 0 15px #ff4fa3;
+}
+
+.card {
+  background: rgba(20, 20, 50, 0.91);
+  border: 1px solid #9c79ff;
+  border-radius: 22px;
+  padding: 25px 18px;
+  box-shadow: 0 0 25px rgba(156, 121, 255, 0.3);
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 14px;
+  border: 1px solid #e6c6ff;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #6938a8, #bd428f);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+button:hover {
+  transform: scale(1.025);
+  filter: brightness(1.2);
+}
+
+button:disabled {
+  opacity: 0.75;
+}
+
+#progress {
+  color: #ffd1ef;
+  margin-bottom: 18px;
+}
+
+#result {
+  display: none;
+}
+
+#bouquet {
+  font-size: 65px;
+  animation: sway 2s infinite ease-in-out;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+#finalTitle {
+  font-size: clamp(28px, 7vw, 42px);
+  color: #ffe28a;
+  text-shadow: 0 0 18px #ff75d1;
+}
+
+#fireworks {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.small {
+  color: #d8d5ff;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+<div class="stars"></div>
+<canvas id="fireworks"></canvas>
+
+<main>
+  <h1>🌸 Zain Dayo's Quiz 🌸</h1>
+  <p>One bestie. Ten questions. Absolutely no peace. 😂</p>
+
+  <section class="card" id="welcome">
+    <div style="font-size:60px">😈💖</div>
+    <h2>Welcome, Zain Dayo!</h2>
+    <p>Let's see how well you know your bestie!</p>
+    <p class="small">Warning: Wrong answers may result in immediate friendship investigations. 🤨</p>
+    <button onclick="startQuiz()">START THE CHAOS 😂</button>
+  </section>
+
+  <section class="card" id="quiz" style="display:none">
+    <p id="progress"></p>
+    <h2 id="question"></h2>
+    <div id="answers"></div>
+    <p id="feedback"></p>
+  </section>
+
+  <section class="card" id="result">
+    <div id="bouquet">💐🌹🌷</div>
+    <h2 id="finalTitle">ZAIN DAYO IS THE BEST! 👑</h2>
+    <p id="scoreText"></p>
+    <p>Official verdict: Friendship level = UNMATCHED. 😂💖</p>
+    <p>May your life bloom like these flowers and your happiness explode like these fireworks! 🎆🌸</p>
+    <button onclick="celebrateAgain()">MORE FIREWORKS! 🎆</button>
+    <button onclick="location.reload()">PLAY AGAIN 🔄</button>
+  </section>
+
+  <p class="small">Made with friendship, laughter and a little madness. 💜</p>
+</main>
+
+<script>
+const questions = [
+  {
+    q: "1. What is the most dangerous thing about our friendship? 😂",
+    a: ["The gossip has no expiry date", "We are too innocent 😇", "We never laugh", "We behave like adults 24/7"],
+    correct: 0
+  },
+  {
+    q: "2. If we got arrested together, what would it probably be for? 🚔",
+    a: ["Stealing someone's snacks", "Laughing at the wrong time", "Being too dramatic", "All of the above 😂"],
+    correct: 3
+  },
+  {
+    q: "3. Who is more likely to start unnecessary drama? 🎭",
+    a: ["Me 😌", "You 😭", "Both of us, obviously", "The government"],
+    correct: 2
+  },
+  {
+    q: "4. If I said 'I have something to tell you...', what would you do? 👀",
+    a: ["Ignore me", "Bring popcorn immediately 🍿", "Go to sleep", "Call the police"],
+    correct: 1
+  },
+  {
+    q: "5. What is the official language of our friendship? 🗣️",
+    a: ["Perfect English", "Silence", "Laughing, teasing and nonsense", "Ancient Greek"],
+    correct: 2
+  },
+  {
+    q: "6. If we went on an adventure, what would happen first? 🚗",
+    a: ["We follow the plan perfectly", "Someone gets lost 😂", "We become millionaires", "We write a research paper"],
+    correct: 1
+  },
+  {
+    q: "7. What should you do if I start acting suspicious? 🤨",
+    a: ["Investigate immediately", "Pretend not to notice", "Run away", "Call my ancestors"],
+    correct: 0
+  },
+  {
+    q: "8. How long can we go without laughing at something stupid? 🤣",
+    a: ["A whole year", "Exactly 3 days", "About 4 minutes", "Never heard of such a thing"],
+    correct: 3
+  },
+  {
+    q: "9. If friendship had an official job title, ours would be... 💼",
+    a: ["Chief Executive Officers of Nonsense", "Professional Accountants", "Secret Agents", "Sleep Consultants"],
+    correct: 0
+  },
+  {
+    q: "10. Final question: Who is Zain Dayo? 👑",
+    a: ["Just another human", "A certified legend 🌟", "The Queen of Queens 👑", "THE BEST, NO ARGUMENTS! 💐"],
+    correct: 3
+  }
+];
+
+let current = 0;
+let score = 0;
+let locked = false;
+
+const welcome = document.getElementById("welcome");
+const quiz = document.getElementById("quiz");
+const result = document.getElementById("result");
+
+function startQuiz() {
+  welcome.style.display = "none";
+  quiz.style.display = "block";
+  current = 0;
+  score = 0;
+  showQuestion();
+}
+
+function showQuestion() {
+  locked = false;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("progress").textContent =
+    "QUESTION " + (current + 1) + " OF " + questions.length;
+
+  document.getElementById("question").textContent = questions[current].q;
+
+  const answers = document.getElementById("answers");
+  answers.innerHTML = "";
+
+  questions[current].a.forEach((answer, index) => {
+    const button = document.createElement("button");
+    button.textContent = answer;
+    button.onclick = () => chooseAnswer(index, button);
+    answers.appendChild(button);
+  });
+}
+
+function chooseAnswer(index, selectedButton) {
+  if (locked) return;
+  locked = true;
+
+  const question = questions[current];
+  const buttons = document.querySelectorAll("#answers button");
+
+  buttons.forEach(button => button.disabled = true);
+
+  if (index === question.correct) {
+    score++;
+    selectedButton.style.background = "#198754";
+    document.getElementById("feedback").textContent =
+      "Correct! Okay, bestie, you might actually know something. 😂💚";
+  } else {
+    selectedButton.style.background = "#b83250";
+    document.getElementById("feedback").textContent =
+      "WRONG! 😭 Friendship authorities have been notified!";
+  }
+
+  const next = document.createElement("button");
+  next.textContent = current === questions.length - 1
+    ? "REVEAL MY DESTINY 👑"
+    : "NEXT QUESTION ➡️";
+
+  next.onclick = () => {
+    current++;
+
+    if (current < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  document.getElementById("answers").appendChild(next);
+}
+
+function showResult() {
+  quiz.style.display = "none";
+  result.style.display = "block";
+
+  let message;
+
+  if (score >= 9) {
+    message = "SCORE: " + score + "/10 — BESTIE PROFESSIONAL! 😂🏆";
+  } else if (score >= 6) {
+    message = "SCORE: " + score + "/10 — Not bad, bestie! More training needed. 😭";
+  } else {
+    message = "SCORE: " + score + "/10 — WHO ARE YOU AND WHAT HAVE YOU DONE WITH MY BESTIE?! 😂";
+  }
+
+  document.getElementById("scoreText").textContent = message;
+  launchFireworks();
+}
+
+function celebrateAgain() {
+  launchFireworks();
+}
+
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+let particles = [];
+let animationRunning = false;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function launchFireworks() {
+  // Rockets rise from the bottom before bursting.
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const startX = Math.random() * canvas.width;
+      const targetY = canvas.height * (0.15 + Math.random() * 0.4);
+
+      particles.push({
+        type: "rocket",
+        x: startX,
+        y: canvas.height + 5,
+        targetY: targetY,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -(7 + Math.random() * 3),
+        color: `hsl(${Math.random() * 360}, 100%, 65%)`
+      });
+    }, i * 250);
+  }
+
+  if (!animationRunning) {
+    animationRunning = true;
+    animateFireworks();
+  }
+}
+
+function burst(x, y, color) {
+  for (let i = 0; i < 65; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 5;
+
+    particles.push({
+      type: "spark",
+      x: x,
+      y: y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 70 + Math.random() * 30,
+      color: color
+    });
+  }
+}
+
+function animateFireworks() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles = particles.filter(p => {
+    if (p.type === "rocket") {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = p.color;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if (p.y <= p.targetY) {
+        burst(p.x, p.y, p.color);
+        return false;
+      }
+
+      return true;
+    }
+
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.035;
+    p.vx *= 0.99;
+    p.vy *= 0.99;
+    p.life--;
+
+    ctx.globalAlpha = Math.max(0, p.life / 100);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+
+    return p.life > 0;
+  });
+
+  if (particles.length > 0) {
+    requestAnimationFrame(animateFireworks);
+  } else {
+    animationRunning = false;
+  }
+}
+</script>
+</body>
+  </html>
